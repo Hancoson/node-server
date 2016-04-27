@@ -1,0 +1,175 @@
+/**
+ * Created by Guoxing.han on 2016-4-27.
+ */
+'use strict';
+
+var gulp         = require('gulp'),
+    sass         = require('gulp-sass'),
+    jshint       = require('gulp-jshint'),
+    concat       = require('gulp-concat'),
+    uglify       = require('gulp-uglify'),
+    autoprefixer = require('gulp-autoprefixer'),
+    minifycss    = require('gulp-minify-css'),
+    imagemin     = require('gulp-imagemin'),
+    base64       = require('gulp-base64'), // css图片转base64，阀值<=n字节转换
+    cache        = require('gulp-cache'), //图片缓存，只有图片替换了才压缩
+    sourcemaps   = require('gulp-sourcemaps'),
+    removeLogs   = require('gulp-removelogs'),//删除调试代码
+    // 静态文件打包合并
+    webpack      = require('gulp-webpack'),
+    config       = require('./webpack.config'),
+    del          = require('del');
+
+// Environment setup 环境设置
+var env = {
+    production: false
+},
+    html='pages/',
+    css_path='src/css',
+    js_path='src/scripts',
+    dist='www/';
+
+// Environment task.
+gulp.task("set-production", function () {
+    env.production = true;
+});
+
+
+// HTML处理
+gulp.task('html', function () {
+    var htmlSrc = src+'src/*.html',
+        htmlDst = 'dist';
+
+    gulp.src(htmlSrc)
+        .pipe(livereload())
+        .pipe(gulp.dest(htmlDst))
+});
+
+// Styles
+gulp.task('styles', function () {
+    var processors = {
+        src         : 'src/styles/*.scss',
+        dist        : 'dist/styles',
+        autoprefixer: autoprefixer({
+            browsers: ['last 2 versions'],
+            cascade : true, //是否美化属性值 默认：true
+            remove  : true //是否去掉不必要的前缀 默认：true
+        })
+
+    };
+    if (env.production) {
+        //生成版本
+        return gulp.src(processors.src)
+            .pipe(sass().on('error', sass.logError))
+            .pipe(processors.autoprefixer)
+            .pipe(base64({
+                baseDir: './images', // 指定路径/下图片转换
+                extensions: ['svg', 'png', /\.jpg#datauri$/i], // 指定转换条件
+                maxImageSize: 8*1024, // bytes，<=8kb转base64
+            }))
+            .pipe(minifycss())
+            .pipe(gulp.dest(processors.dist))
+            .pipe(livereload());
+    }
+    else {
+        //开发版本
+        return gulp.src(processors.src)
+            .pipe(sourcemaps.init())
+            .pipe(sass().on('error', sass.logError))
+            .pipe(processors.autoprefixer)
+            .pipe(sourcemaps.write('./'))
+            .pipe(gulp.dest(processors.dist))
+            .pipe(livereload());
+    }
+});
+
+//copy
+gulp.task('copy', function () {
+    gulp.src(['./src/scripts/lib/**/dist/jquery.min.js', './src/scripts/lib/**/dist/jquery.min.map'])
+        .pipe(gulp.dest('dist/scripts/lib'));
+    gulp.src(['./src/_json/*'])
+        .pipe(gulp.dest('dist/_json'))
+});
+// Scripts
+gulp.task('lint', function () {
+    gulp.src(['src/scripts/*.js', 'src/scripts/lib/*.js'])
+        .pipe(jshint())
+        .pipe(jshint.reporter('default'));
+});
+gulp.task('scripts', function () {
+    var path = {
+        src : 'src/scripts/lib/*.js',
+        dist: 'dist/scripts/lib'
+    };
+    if (env.production) {
+        //生产版本
+        console.log('release');
+        return gulp.src(path.src)
+            .pipe(removeLogs())
+            .pipe(uglify())
+            .pipe(gulp.dest(path.dist))
+    }
+    else {
+        //开发版本
+        console.log('dev');
+        return gulp.src(path.src)
+            .pipe(jshint.reporter('default'))
+            .pipe(gulp.dest(path.dist))
+    }
+});
+gulp.task('webpack', function () {
+    var path = {
+        src : './src/scripts/*.js',
+        dist: './dist/scripts'
+    };
+
+    if (env.production) {
+        //生产版本
+        return gulp.src(path.src)
+            .pipe(webpack(config))
+            .pipe(removeLogs())
+            .pipe(uglify())
+            .pipe(gulp.dest(path.dist));
+    }
+    else {
+        //开发版本
+        return gulp.src(path.src)
+            .pipe(webpack(config))
+            .pipe(gulp.dest(path.dist));
+    }
+});
+// Images
+gulp.task('images', function () {
+    return gulp.src('src/images/**')
+        .pipe(cache(imagemin({optimizationLevel: 3, progressive: true, interlaced: true})))
+        .pipe(gulp.dest('dist/images'));
+});
+
+// Clean
+gulp.task('clean', function () {
+    return del(['dist/styles', 'dist/scripts', 'dist/images']);
+});
+
+// dev task  开发环境
+gulp.task('dev', ['clean'], function () {
+    gulp.start('html', 'styles', 'images', 'copy', 'lint', 'scripts', 'webpack');
+});
+
+//release task 发布版本
+gulp.task('release', ["set-production", 'clean'], function () {
+    gulp.start('html', 'styles', 'images', 'copy', 'lint', 'scripts', 'webpack');
+});
+
+//watch
+gulp.task('watch', function () {
+    gulp.watch('*.html', function () {
+        gulp.run('html');
+    });
+    gulp.watch('src/styles/*.scss', ['styles']);
+
+    // Watch .js files
+    gulp.watch('src/scripts/*.js', ['webpack']);
+
+    // Watch any files in dist/, reload on change
+    gulp.watch(['dist/**']).on('change', livereload.changed);
+});
