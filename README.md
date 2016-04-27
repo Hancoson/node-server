@@ -1,13 +1,19 @@
-# MeiZu 阿拉丁项目
+# NODE-ERVER
+NODE-ERVER is A node start-seed use `ECMAScript 6` `webpack` `gulp` and so on.
 
-### 1. 项目运行：
+### 1. install
 
-> npm start
+`npm install`
 
-### 2. 访问
+### 2. build
 
-> http://127.0.0.1:3000
+* Dev Environment
+  > mpn run dev
+  
+  > npm run watch
+  
+* Release Environment
+  > mpn run build
+  
+  > npm run watch
 
-### 3. 详细说明
-
-> http://wiki.hz.meizu.com/pages/viewpage.action?pageId=4261113

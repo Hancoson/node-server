@@ -3,32 +3,32 @@
  */
 'use strict';
 
-var gulp         = require('gulp'),
-    sass         = require('gulp-sass'),
-    jshint       = require('gulp-jshint'),
-    concat       = require('gulp-concat'),
-    uglify       = require('gulp-uglify'),
+var gulp = require('gulp'),
+    sass = require('gulp-sass'),
+    jshint = require('gulp-jshint'),
+    concat = require('gulp-concat'),
+    uglify = require('gulp-uglify'),
     autoprefixer = require('gulp-autoprefixer'),
-    minifycss    = require('gulp-minify-css'),
-    imagemin     = require('gulp-imagemin'),
-    base64       = require('gulp-base64'), // css图片转base64，阀值<=n字节转换
-    cache        = require('gulp-cache'), //图片缓存，只有图片替换了才压缩
-    sourcemaps   = require('gulp-sourcemaps'),
-    removeLogs   = require('gulp-removelogs'),//删除调试代码
+    minifycss = require('gulp-minify-css'),
+    imagemin = require('gulp-imagemin'),
+    base64 = require('gulp-base64'), // css图片转base64，阀值<=n字节转换
+    cache = require('gulp-cache'), //图片缓存，只有图片替换了才压缩
+    sourcemaps = require('gulp-sourcemaps'),
+    removeLogs = require('gulp-removelogs'),//删除调试代码
     // 静态文件打包合并
-    webpack      = require('gulp-webpack'),
-    config       = require('./webpack.config'),
-    del          = require('del');
+    webpack = require('gulp-webpack'),
+    config = require('./webpack.config'),
+    del = require('del');
 
 // Environment setup 环境设置
 var env = {
     production: false
 },
-    html='pages/',
-    css_path='src/styles/',
-    js_path='src/scripts/',
-    img_paht='src/images/',
-    dist='dist/';
+    html = 'pages/',
+    css_path = 'src/styles/',
+    js_path = 'src/scripts/',
+    img_paht = 'src/images/',
+    dist = 'dist/';
 
 // Environment task.
 gulp.task("set-production", function () {
@@ -38,12 +38,12 @@ gulp.task("set-production", function () {
 // Styles
 gulp.task('styles', function () {
     var processors = {
-        src         : css_path+'*.scss',
-        dist        : dist+'styles',
+        src: css_path + '*.scss',
+        dist: dist + 'styles',
         autoprefixer: autoprefixer({
             browsers: ['last 2 versions'],
-            cascade : true, //是否美化属性值 默认：true
-            remove  : true //是否去掉不必要的前缀 默认：true
+            cascade: true, //是否美化属性值 默认：true
+            remove: true //是否去掉不必要的前缀 默认：true
         })
 
     };
@@ -55,7 +55,7 @@ gulp.task('styles', function () {
             .pipe(base64({
                 baseDir: img_paht, // 指定路径/下图片转换
                 extensions: ['svg', 'png', /\.jpg#datauri$/i], // 指定转换条件
-                maxImageSize: 8*1024, // bytes，<=8kb转base64
+                maxImageSize: 8 * 1024, // bytes，<=8kb转base64
             }))
             .pipe(minifycss())
             .pipe(gulp.dest(processors.dist))
@@ -73,46 +73,37 @@ gulp.task('styles', function () {
 
 //copy
 gulp.task('copy', function () {
-    gulp.src(['./src/scripts/lib/**/dist/jquery.min.js', './src/scripts/lib/**/dist/jquery.min.map'])
-        .pipe(gulp.dest('dist/scripts/lib'));
     gulp.src(['./src/_json/*'])
         .pipe(gulp.dest('dist/_json'))
 });
 // Scripts
-gulp.task('lint', function () {
-    gulp.src([js_path+'*.js', js_path+'lib/*.js'])
+gulp.task('jshint', function () {
+    gulp.src([js_path + '*.js', js_path + 'lib/*.js'])
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });
 gulp.task('scripts', function () {
     var path = {
-        src : js_path+'lib/*.js',
-        dist: dist+'scripts/lib'
+        src: [dist + 'scripts/*.js',dist + 'scripts/**/*.js'],
+        dist: dist + 'scripts'
     };
-    if (env.production) {
-        //生产版本
-        console.log('release');
-        return gulp.src(path.src)
-            .pipe(removeLogs())
-            .pipe(uglify())
-            .pipe(gulp.dest(path.dist))
-    }
-    else {
-        //开发版本
-        console.log('dev');
-        return gulp.src(path.src)
-            .pipe(jshint.reporter('default'))
-            .pipe(gulp.dest(path.dist))
-    }
+
+    console.log('release-scripts');
+    return gulp.src(path.src)
+        .pipe(removeLogs())
+        .pipe(uglify())
+        .pipe(gulp.dest(path.dist));
+
 });
 gulp.task('webpack', function () {
     var path = {
-        src : './src/scripts/*.js',
+        src: './src/scripts/*.js',
         dist: './dist/scripts'
     };
 
     if (env.production) {
         //生产版本
+        console.log('dev-webpack');
         return gulp.src(path.src)
             .pipe(webpack(config))
             .pipe(removeLogs())
@@ -121,6 +112,7 @@ gulp.task('webpack', function () {
     }
     else {
         //开发版本
+        console.log('release-webpack');
         return gulp.src(path.src)
             .pipe(webpack(config))
             .pipe(gulp.dest(path.dist));
@@ -129,23 +121,13 @@ gulp.task('webpack', function () {
 // Images
 gulp.task('images', function () {
     return gulp.src('src/images/**')
-        .pipe(cache(imagemin({optimizationLevel: 3, progressive: true, interlaced: true})))
+        .pipe(cache(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true })))
         .pipe(gulp.dest('dist/images'));
 });
 
 // Clean
 gulp.task('clean', function () {
     return del(['dist/styles', 'dist/scripts', 'dist/images']);
-});
-
-// dev task  开发环境
-gulp.task('dev', ['clean'], function () {
-    gulp.start( 'styles', 'images', 'copy', 'lint', 'scripts', 'webpack');
-});
-
-//release task 发布版本
-gulp.task('release', ["set-production", 'clean'], function () {
-    gulp.start( 'styles', 'images', 'copy', 'lint', 'scripts', 'webpack');
 });
 
 //watch
@@ -155,4 +137,16 @@ gulp.task('watch', function () {
     // Watch .js files
     gulp.watch('src/scripts/*.js', ['webpack']);
 
+    gulp.watch('src/images/**', ['images']);
+
+});
+
+// dev task  开发环境
+gulp.task('dev', ['clean'], function () {
+    gulp.start('styles', 'images', 'jshint', 'webpack', 'watch');
+});
+
+//release task 发布版本
+gulp.task('release', ['set-production'], function () {
+    gulp.start('styles', 'scripts');
 });
