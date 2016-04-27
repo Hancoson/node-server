@@ -33,6 +33,7 @@
     "gulp-cache": "*",
     "gulp-replace":"*",
     "gulp-sass":"*",
+    "gulp-base64":"^0.1.3",
     "gulp-removelogs":"*",
     "del": "*"
   }

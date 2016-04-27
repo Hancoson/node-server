@@ -2,7 +2,7 @@
 *.ico
 *.psd
 .idea
-.vsvode
+.vscode
 .sass-cache
 npm-debug.log
 

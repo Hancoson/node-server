@@ -25,31 +25,21 @@ var env = {
     production: false
 },
     html='pages/',
-    css_path='src/css',
-    js_path='src/scripts',
-    dist='www/';
+    css_path='src/styles/',
+    js_path='src/scripts/',
+    img_paht='src/images/',
+    dist='dist/';
 
 // Environment task.
 gulp.task("set-production", function () {
     env.production = true;
 });
 
-
-// HTML处理
-gulp.task('html', function () {
-    var htmlSrc = src+'src/*.html',
-        htmlDst = 'dist';
-
-    gulp.src(htmlSrc)
-        .pipe(livereload())
-        .pipe(gulp.dest(htmlDst))
-});
-
 // Styles
 gulp.task('styles', function () {
     var processors = {
-        src         : 'src/styles/*.scss',
-        dist        : 'dist/styles',
+        src         : css_path+'*.scss',
+        dist        : dist+'styles',
         autoprefixer: autoprefixer({
             browsers: ['last 2 versions'],
             cascade : true, //是否美化属性值 默认：true
@@ -63,13 +53,12 @@ gulp.task('styles', function () {
             .pipe(sass().on('error', sass.logError))
             .pipe(processors.autoprefixer)
             .pipe(base64({
-                baseDir: './images', // 指定路径/下图片转换
+                baseDir: img_paht, // 指定路径/下图片转换
                 extensions: ['svg', 'png', /\.jpg#datauri$/i], // 指定转换条件
                 maxImageSize: 8*1024, // bytes，<=8kb转base64
             }))
             .pipe(minifycss())
             .pipe(gulp.dest(processors.dist))
-            .pipe(livereload());
     }
     else {
         //开发版本
@@ -79,7 +68,6 @@ gulp.task('styles', function () {
             .pipe(processors.autoprefixer)
             .pipe(sourcemaps.write('./'))
             .pipe(gulp.dest(processors.dist))
-            .pipe(livereload());
     }
 });
 
@@ -92,14 +80,14 @@ gulp.task('copy', function () {
 });
 // Scripts
 gulp.task('lint', function () {
-    gulp.src(['src/scripts/*.js', 'src/scripts/lib/*.js'])
+    gulp.src([js_path+'*.js', js_path+'lib/*.js'])
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });
 gulp.task('scripts', function () {
     var path = {
-        src : 'src/scripts/lib/*.js',
-        dist: 'dist/scripts/lib'
+        src : js_path+'lib/*.js',
+        dist: dist+'scripts/lib'
     };
     if (env.production) {
         //生产版本
@@ -152,24 +140,19 @@ gulp.task('clean', function () {
 
 // dev task  开发环境
 gulp.task('dev', ['clean'], function () {
-    gulp.start('html', 'styles', 'images', 'copy', 'lint', 'scripts', 'webpack');
+    gulp.start( 'styles', 'images', 'copy', 'lint', 'scripts', 'webpack');
 });
 
 //release task 发布版本
 gulp.task('release', ["set-production", 'clean'], function () {
-    gulp.start('html', 'styles', 'images', 'copy', 'lint', 'scripts', 'webpack');
+    gulp.start( 'styles', 'images', 'copy', 'lint', 'scripts', 'webpack');
 });
 
 //watch
 gulp.task('watch', function () {
-    gulp.watch('*.html', function () {
-        gulp.run('html');
-    });
     gulp.watch('src/styles/*.scss', ['styles']);
 
     // Watch .js files
     gulp.watch('src/scripts/*.js', ['webpack']);
 
-    // Watch any files in dist/, reload on change
-    gulp.watch(['dist/**']).on('change', livereload.changed);
 });

@@ -8,8 +8,7 @@ var ProvidePlugin      = require("./node_modules/webpack/lib/ProvidePlugin"); //
 module.exports = {
     entry  : {
         index: __dirname + '/src/scripts/index.js',
-        p1: __dirname + '/src/scripts/p1.js',
-        p3: __dirname + '/src/scripts/p3.js'
+        about: __dirname + '/src/scripts/about.js'
     },
     output : {
         path    : __dirname + 'www/src/js',
@@ -25,7 +24,7 @@ module.exports = {
         loaders: [
             {
                 loader: 'babel-loader',
-                test  : path.join(__dirname, 'src/js'),
+                test  : path.join(__dirname, 'src/scripts'),
                 query : {
                     presets: 'es2015',
                 }
@@ -41,7 +40,7 @@ module.exports = {
             jQuery         : "jquery",
             "window.jQuery": "jquery"
         }),
-        new CommonsChunkPlugin("lib-pages.js", 2) //文件被引用两次就打包到common.js文件中
+        new CommonsChunkPlugin("lib/lib-pages.js", 2) //文件被引用两次就打包到common.js文件中
     ],
     stats  : {
         // Nice colored output
