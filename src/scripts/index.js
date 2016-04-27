@@ -5,6 +5,13 @@ import $ from 'jquery';
 const Home = {
     init: () => {
         console.log($);
+        this.initDome();
     }
 };
+$.extend(Home, {
+    initDome: () => {
+        console.log(123)
+    }
+});
+
 $(Home.init);

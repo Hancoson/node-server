@@ -63,6 +63,11 @@ gulp.task('styles', function () {
     else {
         //开发版本
         return gulp.src(processors.src)
+            .pipe(base64({
+                baseDir: img_paht, // 指定路径/下图片转换
+                extensions: ['svg', 'png', /\.jpg#datauri$/i], // 指定转换条件
+                maxImageSize: 8 * 1024, // bytes，<=8kb转base64
+            }))
             .pipe(sourcemaps.init())
             .pipe(sass().on('error', sass.logError))
             .pipe(processors.autoprefixer)
