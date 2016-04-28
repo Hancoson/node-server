@@ -8,7 +8,8 @@ var ProvidePlugin = require("./node_modules/webpack/lib/ProvidePlugin"); //
 module.exports = {
     entry: {
         index: __dirname + '/src/scripts/index.js',
-        about: __dirname + '/src/scripts/about.js'
+        about: __dirname + '/src/scripts/about.js',
+        arr: __dirname + '/src/scripts/arr.js'
     },
     output: {
         path: __dirname + 'www/src/js',

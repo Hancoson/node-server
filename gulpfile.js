@@ -89,7 +89,7 @@ gulp.task('jshint', function () {
 });
 gulp.task('scripts', function () {
     var path = {
-        src: [dist + 'scripts/*.js',dist + 'scripts/**/*.js'],
+        src: [dist + 'scripts/*.js', dist + 'scripts/**/*.js'],
         dist: dist + 'scripts'
     };
 
@@ -148,7 +148,7 @@ gulp.task('watch', function () {
 
 // dev task  开发环境
 gulp.task('dev', ['clean'], function () {
-    gulp.start('styles', 'images', 'jshint', 'webpack', 'watch');
+    gulp.start('styles', 'images', 'webpack', 'watch');
 });
 
 //release task 发布版本
