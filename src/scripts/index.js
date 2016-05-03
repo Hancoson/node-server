@@ -7,7 +7,7 @@ const Home = {
         console.log($);
         let arr = [1, 2, 3, 4, 5, 6];
         for (let val of arr) {
-            console.log(val)
+            console.log(val);
         }
     }
 };

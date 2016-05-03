@@ -6,7 +6,7 @@ const Arr = {
     init: () => {
         let arr = [1, 2, 3, 4, 5, 6];
         for (let val of arr) {
-            console.log('init：'+val)
+            console.log('init：' + val);
         }
     }
 };
