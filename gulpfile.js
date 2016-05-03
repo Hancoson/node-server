@@ -1,7 +1,6 @@
 /**
  * Created by Guoxing.han on 2016-4-27.
  */
-'use strict';
 
 var gulp         = require('gulp'),
     sass         = require('gulp-sass'),
@@ -58,7 +57,7 @@ gulp.task('styles', function () {
                 maxImageSize: 8 * 1024, // bytes，<=8kb转base64
             }))
             .pipe(minifycss())
-            .pipe(gulp.dest(processors.dist))
+            .pipe(gulp.dest(processors.dist));
     }
     else {
         //开发版本
@@ -72,14 +71,14 @@ gulp.task('styles', function () {
             .pipe(sass().on('error', sass.logError))
             .pipe(processors.autoprefixer)
             .pipe(sourcemaps.write('./'))
-            .pipe(gulp.dest(processors.dist))
+            .pipe(gulp.dest(processors.dist));
     }
 });
 
 //copy
 gulp.task('copy', function () {
     gulp.src(['./src/_json/*'])
-        .pipe(gulp.dest('dist/_json'))
+        .pipe(gulp.dest('dist/_json'));
 });
 // Scripts
 gulp.task('jshint', function () {
@@ -87,20 +86,7 @@ gulp.task('jshint', function () {
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });
-// gulp.task('scripts', function () {
-//     var path = {
-//         src: [dist + 'scripts/*.js', dist + 'scripts/**/*.js'],
-//         dist: dist + 'scripts'
-//     };
-//
-//     console.log('release-scripts');
-//     return gulp.src(path.src)
-//         //.pipe(removeLogs())
-//         .pipe(uglify())
-//         .pipe(gulp.dest(path.dist));
-//
-// });
-gulp.task('webpack', function () {
+gulp.task('scripts', function () {
     var path = {
         src : './src/scripts/*.js',
         dist: './dist/scripts'
@@ -143,7 +129,7 @@ gulp.task('watch', function () {
     gulp.watch('src/styles/*.scss', ['styles']);
 
     // Watch .js files
-    gulp.watch('src/scripts/*.js', ['webpack']);
+    gulp.watch('src/scripts/*.js', ['scripts']);
 
     gulp.watch('src/images/**', ['images']);
 
@@ -151,10 +137,10 @@ gulp.task('watch', function () {
 
 // dev task  开发环境
 gulp.task('dev', ['clean'], function () {
-    gulp.start('styles', 'images', 'webpack', 'watch');
+    gulp.start('styles', 'images', 'scripts', 'watch');
 });
 
 //release task 发布版本
 gulp.task('release', ['clean','set-production'], function () {
-    gulp.start('styles', 'webpack');
+    gulp.start('styles', 'scripts');
 });
