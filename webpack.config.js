@@ -10,7 +10,8 @@ module.exports = {
         index: __dirname + '/src/scripts/index.js',
         about: __dirname + '/src/scripts/about.js',
         arr: __dirname + '/src/scripts/arr.js',
-        'template-string': __dirname + '/src/scripts/template-string.js'
+        'template-string': __dirname + '/src/scripts/template-string.js',
+        arrow: __dirname + '/src/scripts/arrow.js',
     },
     output: {
         path: __dirname + 'www/src/js',

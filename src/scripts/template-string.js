@@ -16,9 +16,9 @@ const Template = {
     Param: (x = 'a', y = 'b') => {
         Template.context.html(`Lions and ${x} and ${y}! Oh my!`);
     },
-    test: () => {
+    test: function(){
         //console.log(this.x);
-        $('#event').on('click',function(){
+        $('#event').on('click',()=>{
             console.log(this,11334);
         });
     }
