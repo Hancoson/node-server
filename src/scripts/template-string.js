@@ -5,8 +5,7 @@ import $ from 'jquery';
 import {utils} from './lib/utils';
 const Template = {
     x: 0,
-    init: (o) => {
-        console.log(this);
+    init: () => {
         Template.context = $('#test');
         Template.Param();
         utils.alert(123, 1, 3);
@@ -16,10 +15,9 @@ const Template = {
     Param: (x = 'a', y = 'b') => {
         Template.context.html(`Lions and ${x} and ${y}! Oh my!`);
     },
-    test: function(){
-        //console.log(this.x);
-        $('#event').on('click',()=>{
-            console.log(this,11334);
+    test: (e)=>{
+        $('#event').on('click',(event)=>{
+            console.log(this,11334,event.currentTarget);
         });
     }
 };
