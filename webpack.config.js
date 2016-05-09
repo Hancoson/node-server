@@ -13,6 +13,7 @@ module.exports = {
         'template-string': __dirname + '/src/scripts/template-string.js',
         arrow: __dirname + '/src/scripts/arrow.js',
         setGet: __dirname + '/src/scripts/set-get.js',
+        class: __dirname + '/src/scripts/class.js',
     },
     output: {
         path: __dirname + 'www/src/js',
