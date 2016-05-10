@@ -14,6 +14,7 @@ module.exports = {
         arrow: __dirname + '/src/scripts/arrow.js',
         setGet: __dirname + '/src/scripts/set-get.js',
         class: __dirname + '/src/scripts/class.js',
+        jiegou: __dirname + '/src/scripts/jiegou.js',
     },
     output: {
         path: __dirname + 'www/src/js',
