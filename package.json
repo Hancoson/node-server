@@ -3,8 +3,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "gulp dev",
-    "build":"gulp release",
-    "watch":"gulp watch"
+    "build":"gulp release"
   },
   "description": "A node start-seed",
   "author": "Guoxing.han <hancoson@163.com>",
