@@ -37,6 +37,7 @@
     "gulp-sass":"*",
     "gulp-base64":"^0.1.3",
     "gulp-removelogs":"*",
-    "del": "*"
+    "del": "*",
+    "webpack-glob-entries":"^1.0.1"
   }
 }

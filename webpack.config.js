@@ -1,37 +1,42 @@
-var path = require('path');
+var path    = require('path');
 var webpack = require('webpack');
 
-var lib_dir = __dirname + '/node_modules';
+var lib_dir            = __dirname + '/node_modules';
 var CommonsChunkPlugin = require("./node_modules/webpack/lib/optimize/CommonsChunkPlugin"); //将多个打包后的资源中的公共部分打包成单独的文件
-var ProvidePlugin = require("./node_modules/webpack/lib/ProvidePlugin"); //
+var ProvidePlugin      = require("./node_modules/webpack/lib/ProvidePlugin"); //
+
+//entry 简化
+var glob_entries = require('webpack-glob-entries')
 
 module.exports = {
-    entry: {
-        index: __dirname + '/src/scripts/index.js',
-        about: __dirname + '/src/scripts/about.js',
-        arr: __dirname + '/src/scripts/arr.js',
-        'template-string': __dirname + '/src/scripts/template-string.js',
-        arrow: __dirname + '/src/scripts/arrow.js',
-        setGet: __dirname + '/src/scripts/set-get.js',
-        class: __dirname + '/src/scripts/class.js',
-        jiegou: __dirname + '/src/scripts/jiegou.js',
-    },
-    output: {
-        path: __dirname + 'www/src/js',
+    entry: glob_entries(__dirname + '/src/scripts/*.js'),
+    // entry: {
+    //     index: __dirname + '/src/scripts/index.js',
+    //     about: __dirname + '/src/scripts/about.js',
+    //     arr: __dirname + '/src/scripts/arr.js',
+    //     'template-string': __dirname + '/src/scripts/template-string.js',
+    //     arrow: __dirname + '/src/scripts/arrow.js',
+    //     setGet: __dirname + '/src/scripts/set-get.js',
+    //     class: __dirname + '/src/scripts/class.js',
+    //     jiegou: __dirname + '/src/scripts/jiegou.js',
+    //     module: __dirname + '/src/scripts/module.js',
+    // },
+    output : {
+        path    : __dirname + 'www/src/js',
         filename: '[name].js'
     },
     resolve: {
         extensions: ['', '.js'],
-        alias: {
+        alias     : {
             jquery: lib_dir + "/jquery/dist/jquery.js"
         }
     },
-    module: {
+    module : {
         loaders: [
             {
                 loader: 'babel-loader',
-                test: path.join(__dirname, 'src/scripts'),
-                query: {
+                test  : path.join(__dirname, 'src/scripts'),
+                query : {
                     presets: 'es2015',
                 }
             }
@@ -42,13 +47,13 @@ module.exports = {
         // Avoid publishing files when compilation fails
         new webpack.NoErrorsPlugin(),
         new ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery",
+            $              : "jquery",
+            jQuery         : "jquery",
             "window.jQuery": "jquery"
         }),
         new CommonsChunkPlugin("lib/lib-pages.js", 2) //文件被引用两次就打包到common.js文件中
     ],
-    stats: {
+    stats  : {
         // Nice colored output
         colors: true
     },
