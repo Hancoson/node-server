@@ -94,7 +94,7 @@ gulp.task('scripts', function () {
 
     if (env.production) {
         //生产版本
-        console.log('dev-webpack');
+        console.log('this is release');
         return gulp.src(path.src)
             .pipe(webpack(config))
             .pipe(removeLogs())
@@ -106,7 +106,7 @@ gulp.task('scripts', function () {
     }
     else {
         //开发版本
-        console.log('release-webpack');
+        console.log('this is dev');
         return gulp.src(path.src)
             .pipe(webpack(config))
             .pipe(gulp.dest(path.dist));
