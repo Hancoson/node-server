@@ -11,15 +11,7 @@ var glob_entries = require('webpack-glob-entries')
 module.exports = {
     entry: glob_entries(__dirname + '/src/scripts/*.js'),
     // entry: {
-    //     index: __dirname + '/src/scripts/index.js',
-    //     about: __dirname + '/src/scripts/about.js',
-    //     arr: __dirname + '/src/scripts/arr.js',
-    //     'template-string': __dirname + '/src/scripts/template-string.js',
-    //     arrow: __dirname + '/src/scripts/arrow.js',
-    //     setGet: __dirname + '/src/scripts/set-get.js',
-    //     class: __dirname + '/src/scripts/class.js',
-    //     jiegou: __dirname + '/src/scripts/jiegou.js',
-    //     module: __dirname + '/src/scripts/module.js',
+    //     index: __dirname + '/src/scripts/index.js'
     // },
     output : {
         path    : __dirname + 'www/src/js',
