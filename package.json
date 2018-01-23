@@ -6,7 +6,7 @@
     "build": "gulp release"
   },
   "description": "A node start-seed",
-  "author": "Guoxing.han <hancoson@163.com>",
+  "author": "Guoxing.han <hancoson#163.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/Hancoson/node-server.git"
